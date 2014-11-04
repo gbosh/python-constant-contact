@@ -146,7 +146,8 @@ class Api(object):
             last_name)
         return self._request(url=url, method=PUT, body=body)
 
-    def create_contact_template(self, email, group_ids, first_name, last_name):
+    def create_contact_template(self, email, group_ids, first_name, last_name,
+                                company_name='', city='', state_name=''):
 
         contact_groups = [
             '<ContactList id="%s/%s/lists/%s" />' % (self.public_url,
@@ -163,20 +164,24 @@ class Api(object):
         email = '<EmailAddress>%s</EmailAddress>' % email
         first_name = '<FirstName>%s</FirstName>' % first_name
         last_name = '<LastName>%s</LastName>' % last_name
+        company_name = '<CompanyName>%s</CompanyName>' % company_name
+        city = '<City>%s</City>' % city
+        state_name = '<StateName>%s</StateName>' % state_name
         optin = '<OptInSource>ACTION_BY_CUSTOMER</OptInSource>'
         groups = '<ContactLists>\n%s</ContactLists>' % '\n'.join(
             contact_groups)
         content_end = '</Contact></content>'
         entry_end = '</entry>'
         return ''.join([entry_begin, title, updated, author, id, summary,
-            content_begin, email, first_name, last_name, optin, groups,
-            content_end, entry_end])
+            content_begin, email, first_name, last_name, company_name,
+            city, state_name, optin, groups, content_end, entry_end])
 
-    def create_contact(self, email, group_ids, first_name='', last_name=''):
+    def create_contact(self, email, group_ids, first_name='', last_name='',
+                       company_name='', city='', state_name=''):
 
         url = self.contacts_url
         body = self.create_contact_template(email, group_ids, first_name,
-            last_name)
+            last_name, company_name, city, state_name)
         response,  body = self._request(url=url, method=POST, body=body)
         return (response, body)
 
